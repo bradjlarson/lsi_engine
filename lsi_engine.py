@@ -5,7 +5,7 @@ import sys
 import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-stop_list = set("the of and he our ? had it?s there time out know  one you're what just so get like could people \
+default_stop_list = set("the of and he our ? had it?s there time out know  one you're what just so get like could people \
 , - it's some how but av don't their who when we're would do don?t they me his were she her had its to a in for \
 is on that by this with i you it not or be are from at as your all have new more an was we will home can us about \
 if page my has".split())
@@ -33,7 +33,7 @@ def remove_singles(texts):
 	return [[word for word in text if word not in tokens_once] for text in texts]
 
 #this converts normal text documents (spaces and the like) to tokens		
-def to_texts(docs, stop_list):
+def to_texts(docs, stop_list=default_stop_list):
 	texts = [[word for word in doc.lower().split() if word not in stop_list] for doc in docs]
 	return texts
 
@@ -53,7 +53,7 @@ def to_corpus(dictnry, texts, filename=False):
 
 #this returns a corpus and dictionary based on a query and a connection
 #It also provides options for a stop list and the ability to save the dictionary and corpus	
-def get_corpus(query, con, stop_list=[], filename=False):
+def get_corpus(query, con, stop_list=default_stop_list, filename=False):
 	docs = prep_data(query, con)
 	texts = to_texts(docs, stop_list)
 	dictnry = to_dict(texts, filename)
@@ -78,8 +78,14 @@ def build_lsi(corpus, dictnry, filename=False, n_topics=150):
 		index.save('%s.index' % filename)
 	return (l_corpus, tfidf, lsi, index)
 
+#allows you to build a LSI model from just a query and a MySQL connection 	
+def model_lsi(query, con, filename=False, stop_list=default_stop_list, n_topics=150):
+	(corpus, dictnry) = get_corpus(query, con, stop_list, filename)
+	(l_corpus, tfidf, lsi, index) = build_lsi(corpus, dictnry, filename, n_topics)
+	return (l_corpus, tfidf, lsi, index, dictnry)
+
 #returns a list with the n best matches in tuple form, requires you to pass in the objects
-def query_lsi(query, con, dictnry, tfidf, lsi, index, stop_list=[], num_matches=10):
+def query_lsi(query, con, dictnry, tfidf, lsi, index, stop_list=default_stop_list, num_matches=10):
 	data = to_texts(prep_data(query, con), stop_list)
 	data_bow = [dictnry.doc2bow(doc) for doc in data]
 	data_tfidf = tfidf[data_bow]
@@ -88,7 +94,7 @@ def query_lsi(query, con, dictnry, tfidf, lsi, index, stop_list=[], num_matches=
 	return sims
 
 #returns a list with the n best matches in tuple form, loads the objects from disk
-def query_lsi_stored(query, con, filename, stop_list=[], num_matches=10):
+def query_lsi_stored(query, con, filename, stop_list=default_stop_list, num_matches=10):
 	dictnry = corpora.Dictionary.load('%s.dict' % filename)
 	tfidf = models.TfidfModel.load('%s.tfidf' % filename)
 	lsi = models.LsiModel.load('%s.lsi' % filename)
