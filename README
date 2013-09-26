@@ -1,3 +1,7 @@
 README for Predictive Project
 
-This is a set of functions and classes for use in conjunction with the Gensim open source library. 
+This is a set of functions that sits on top of the Gensim open source library. 
+
+It requires Gensim, which in turn requires NumPy, SciPy, and the BLAS libraries. If on Ubuntu, it is recommended to get these libraries vis apt-get python-numpy python-scipy.
+
+Functions are intended to make creating and deploying a model as simple as feeding it a query and a database connection. It also allows for easy querying against those models using queries from a database.   
