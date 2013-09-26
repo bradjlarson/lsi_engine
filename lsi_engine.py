@@ -5,6 +5,11 @@ import sys
 import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
+stop_list = set("the of and he our ? had it?s there time out know  one you're what just so get like could people \
+, - it's some how but av don't their who when we're would do don?t they me his were she her had its to a in for \
+is on that by this with i you it not or be are from at as your all have new more an was we will home can us about \
+if page my has".split())
+
 #This assumes a query to a MySQL DB, but this can be changed
 def get_data(query, con):
 	with con:
