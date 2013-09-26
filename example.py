@@ -21,5 +21,8 @@ query = "select article_text from jobs.testing_corpus order by RAND() limit 10"
 testing = lsi_engine.query_lsi(query, con, dictnry, tfidf, lsi, index, lsi_engine.stop_list, 5)
 #print the results
 print testing
-testing2 = lsi_engine.query_lsi_stored(query, con, filename, lsi_engine.stop_list, 5)
+#example of simultaneous corpus and model construction
+(l_corpus, tfidf, lsi, index, dictnry) = lsi_engine.model_lsi(query, con, 'testing2')
+#example of querying a saved model
+testing2 = lsi_engine.query_lsi_stored(query, con, 'testing2', lsi_engine.stop_list, 5)
 print testing2
