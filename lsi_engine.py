@@ -10,6 +10,8 @@ default_stop_list = set("the of and he our ? had it?s there time out know  one y
 is on that by this with i you it not or be are from at as your all have new more an was we will home can us about \
 if page my has".split())
 
+
+
 #This assumes a query to a MySQL DB, but this can be changed
 def get_data(query, con):
 	with con:
@@ -110,3 +112,32 @@ def query_lsi_stored(query, con, filename, stop_list=default_stop_list, num_matc
 def top_n(query, n):	
 	sims = sorted(enumerate(query), key=lambda item: -item[1])
 	return sims[:n]
+	
+def prep_data_id(query, con):
+	data = get_data(query, con)
+	for row in data:
+		yield [row[0], clean_text(row[1])]
+
+#this converts normal text documents (spaces and the like) to tokens and retains the id value		
+def to_texts_id(docs, stop_list=default_stop_list):
+	texts = [[doc[0], [word for word in doc[1].lower().split() if word not in stop_list]] for doc in docs]
+	return texts
+
+#this converts a collection of tokens to a bag of words count and retains the id value
+def to_dict_id(texts, filename=False):
+	dictnry = corpora.Dictionary(text[1] for text in texts)
+	if filename:
+		dictnry.save('%s.dict' % filename)
+	return dictnry
+
+#this converts a collection of tokens to an id mapping based on a dictionary and retains the id value
+def to_corpus_id(dictnry, texts, filename=False):
+	corpus = [[text[0], dictnry.doc2bow(text[1])] for text in texts]
+	if filename:
+		corpora.MmCorpus.serialize('%s.mm' % filename, corpus)
+	return corpus
+	
+		
+
+					
+	
