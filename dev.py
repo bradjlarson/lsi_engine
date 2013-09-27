@@ -18,11 +18,13 @@ def prep_data2(query, con):
 
 def to_texts2(docs, stop_list):
 	texts = [[doc[0], [word for word in doc[1].lower().split() if word not in stop_list]] for doc in docs]		
-	return texts
+	return text
 	
 docs = prep_data2(query, con)
+#for doc in docs:
+#	print doc
 texts = to_texts2(docs, _.default_stop_list)
-print texts[:5]	
+#print texts[:5]	
 
 
 """
