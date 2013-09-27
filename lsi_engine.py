@@ -148,7 +148,7 @@ def get_corpus_id(query, con, stop_list=default_stop_list, filename=False):
 	docs = prep_data_id(query, con)
 	texts = to_texts_id(docs, stop_list)
 	dictnry = to_dict_id(texts, filename)
-	(corpus, id_mapping) = to_corpus(dictnry, texts, filename)
+	(corpus, id_mapping) = to_corpus_id(dictnry, texts, filename)
 	return (corpus, dictnry, id_mapping)
 	
 #allows you to build a LSI model from just a query and a MySQL connection and then map results back to your DB
