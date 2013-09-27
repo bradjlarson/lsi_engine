@@ -112,7 +112,9 @@ def query_lsi_stored(query, con, filename, stop_list=default_stop_list, num_matc
 def top_n(query, n):	
 	sims = sorted(enumerate(query), key=lambda item: -item[1])
 	return sims[:n]
-	
+
+#This is a generator that yields one DB result at a time, with two columns,
+# one for the db.id, and the other containing the text
 def prep_data_id(query, con):
 	data = get_data(query, con)
 	for row in data:
@@ -131,14 +133,39 @@ def to_dict_id(texts, filename=False):
 		dictnry.save('%s.dict' % filename)
 	return dictnry
 
-#this converts a collection of tokens to an id mapping based on a dictionary and retains the id value
+#this converts a collection of tokens to an id mapping based on a dictionary as well as an id-to-index mapping
 def to_corpus_id(dictnry, texts, filename=False):
-	corpus = [[text[0], dictnry.doc2bow(text[1])] for text in texts]
+	corpus_id = [[text[0], dictnry.doc2bow(text[1])] for text in texts]
+	id_mapping = [[doc[0], corpus.index(doc)] for doc in corpus_id]
+	corpus = [doc[1] for doc in corpus_id]
 	if filename:
 		corpora.MmCorpus.serialize('%s.mm' % filename, corpus)
-	return corpus
+	return (corpus, id_mapping)
 	
-		
+#this returns a corpus and dictionary and id-to-index mapping based on a query and a connection
+#It also provides options for a stop list and the ability to save the dictionary and corpus	
+def get_corpus_id(query, con, stop_list=default_stop_list, filename=False):
+	docs = prep_data_id(query, con)
+	texts = to_texts_id(docs, stop_list)
+	dictnry = to_dict_id(texts, filename)
+	(corpus, id_mapping) = to_corpus(dictnry, texts, filename)
+	return (corpus, dictnry, id_mapping)
+	
+#allows you to build a LSI model from just a query and a MySQL connection and then map results back to your DB
+def model_lsi_id(query, con, filename=False, stop_list=default_stop_list, n_topics=150):
+	(corpus, dictnry, id_mapping) = get_corpus_id(query, con, stop_list, filename)
+	(l_corpus, tfidf, lsi, index) = build_lsi(corpus, dictnry, filename, n_topics)
+	return (l_corpus, tfidf, lsi, index, dictnry, id_mapping)
+
+#returns a list with the n best matches in tuple form, requires you to pass in the objects
+def query_lsi_id(query, con, dictnry, tfidf, lsi, index, stop_list=default_stop_list, num_matches=10):
+	data = to_texts(prep_data(query, con), stop_list)
+	data_bow = [dictnry.doc2bow(doc) for doc in data]
+	data_tfidf = tfidf[data_bow]
+	data_lsi = lsi[data_tfidf]
+	sims = [top_n(index[doc], num_matches) for doc in data_lsi]
+	return sims	
+			
 
 					
 	
