@@ -19,7 +19,7 @@ texts_only = [text[1] for text in texts]
 #print texts[:5]
 dictnry = _.to_dict_id(texts, filename)
 corpus = _.to_corpus_id(dictnry, texts)
-id_to_cid = [doc[0], corpus.index(doc)] for doc in corpus]
+id_to_cid = [[doc[0], corpus.index(doc)] for doc in corpus]
 print id_to_cid
 
 
