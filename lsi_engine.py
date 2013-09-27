@@ -141,7 +141,7 @@ def to_corpus_id(dictnry, texts, filename=False):
 	corpus = [doc[1] for doc in corpus_id]
 	if filename:
 		corpora.MmCorpus.serialize('%s.mm' % filename, corpus)
-		cPickle.dump(id_mapping, open('%s.idmap' % filename))
+		cPickle.dump(id_mapping, open('%s.idmap' % filename), 'wb')
 	return (corpus, id_mapping)
 	
 #this returns a corpus and dictionary and id-to-index mapping based on a query and a connection
