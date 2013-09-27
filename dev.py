@@ -10,21 +10,15 @@ con = db.con;
 query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"
 #set filename
 filename = 'testing'
-
-def prep_data2(query, con):
-	data = _.get_data(query, con)
-	for row in data:
-		yield [row["article_id"], _.clean_text(row["article_text"])]
-
-def to_texts2(docs, stop_list):
-	texts = [[doc[0], [word for word in doc[1].lower().split() if word not in stop_list]] for doc in docs]		
-	return text
 	
-docs = prep_data2(query, con)
+docs = _.prep_data_id(query, con)
 #for doc in docs:
 #	print doc
-texts = to_texts2(docs, _.default_stop_list)
-#print texts[:5]	
+texts = _.to_texts_id(docs, _.default_stop_list)
+#print texts[:5]
+dictnry = _.to_dict_id(texts, filename)
+corpus = _.to_corpus_id(dictnry, texts, filename)
+print corpus
 
 
 """
