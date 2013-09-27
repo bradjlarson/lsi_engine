@@ -7,14 +7,14 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 #set up DB connection
 con = db.con;
 #set our query to build model
-query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 1000"
+query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"
 #set filename
 filename = 'testing'
 
 def prep_data2(query, con):
 	data = _.get_data(query, con)
 	for row in data:
-		yield [row["article_id"], row["article_text"]]
+		yield [row["article_id"], _.clean_text(row["article_text"])]
 
 def to_texts2(docs, stop_list):
 	texts = [[doc[0], [word for word in doc[1].lower().split() if word not in stop_list]] for doc in docs]		
