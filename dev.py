@@ -15,12 +15,12 @@ docs = _.prep_data_id(query, con)
 #for doc in docs:
 #	print doc
 texts = _.to_texts_id(docs, _.default_stop_list)
-
-
+texts_only = [text[1] for text in texts]
 #print texts[:5]
 dictnry = _.to_dict_id(texts, filename)
 corpus = _.to_corpus_id(dictnry, texts)
-print corpus
+id_to_cid = [doc[0], corpus.index(doc)] for doc in corpus]
+print id_to_cid
 
 
 """
