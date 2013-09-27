@@ -116,7 +116,8 @@ def top_n(query, n):
 def prep_data_id(query, con):
 	data = get_data(query, con)
 	for row in data:
-		yield [row[0], clean_text(row[1])]
+		#for now i am hard coding the column names, i'll have to add them as passed in values later
+		yield [row["article_id"], clean_text(row["article_text"])]
 
 #this converts normal text documents (spaces and the like) to tokens and retains the id value		
 def to_texts_id(docs, stop_list=default_stop_list):
