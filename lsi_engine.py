@@ -2,6 +2,7 @@ from gensim import corpora, models, similarities
 from urllib import unquote_plus
 import MySQLdb as mdb
 import sys
+import cPickle
 import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -140,6 +141,7 @@ def to_corpus_id(dictnry, texts, filename=False):
 	corpus = [doc[1] for doc in corpus_id]
 	if filename:
 		corpora.MmCorpus.serialize('%s.mm' % filename, corpus)
+		cPickle.dump(id_mapping, open('%s.idmap' % filename))
 	return (corpus, id_mapping)
 	
 #this returns a corpus and dictionary and id-to-index mapping based on a query and a connection
