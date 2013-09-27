@@ -11,7 +11,7 @@ query = "select article_id, article_text from jobs.testing_corpus order by RAND(
 #set filename
 filename = 'testing'
 	
-(corpus, dictnry, id_mapping) = _.get_corpus_id(query, con, _.default_stop_list)
+(corpus, dictnry, id_mapping) = _.get_corpus_id(query, con, _.default_stop_list, 'testing3')
 print corpus
 print dictnry
 print id_mapping
