@@ -136,7 +136,7 @@ def to_dict_id(texts, filename=False):
 #this converts a collection of tokens to an id mapping based on a dictionary as well as an id-to-index mapping
 def to_corpus_id(dictnry, texts, filename=False):
 	corpus_id = [[text[0], dictnry.doc2bow(text[1])] for text in texts]
-	id_mapping = [[doc[0], corpus.index(doc)] for doc in corpus_id]
+	id_mapping = [[doc[0], corpus_id.index(doc)] for doc in corpus_id]
 	corpus = [doc[1] for doc in corpus_id]
 	if filename:
 		corpora.MmCorpus.serialize('%s.mm' % filename, corpus)
@@ -148,8 +148,8 @@ def get_corpus_id(query, con, stop_list=default_stop_list, filename=False):
 	docs = prep_data_id(query, con)
 	texts = to_texts_id(docs, stop_list)
 	dictnry = to_dict_id(texts, filename)
-	(corpus, id_mapping) = to_corpus_id(dictnry, texts, filename)
-	return (corpus, dictnry, id_mapping)
+	(corpus_only, id_mapping) = to_corpus_id(dictnry, texts, filename)
+	return (corpus_only, dictnry, id_mapping)
 	
 #allows you to build a LSI model from just a query and a MySQL connection and then map results back to your DB
 def model_lsi_id(query, con, filename=False, stop_list=default_stop_list, n_topics=150):
