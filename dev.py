@@ -13,7 +13,7 @@ filename = 'testing'
 	
 #(corpus, dictnry, id_mapping) = _.get_corpus_id(query, con, _.default_stop_list, 'testing3')
 query = _.query_lsi_stored(query, con, 'testing2', _.default_stop_list, 5)
-
+print query
 
 
 """
