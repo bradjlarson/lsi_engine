@@ -13,6 +13,7 @@ filename = 'testing'
 	
 #(corpus, dictnry, id_mapping) = _.get_corpus_id(query, con, _.default_stop_list, 'testing3')
 (l_corpus, tfidf, lsi, index, dictnry, id_mapping) = _.model_lsi_id(query, con, filename='testing3')
+query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"
 (sims, sims_id) = _.query_lsi_stored_id(query, con, 'testing3', _.default_stop_list, 5)
 print sims_id
 
