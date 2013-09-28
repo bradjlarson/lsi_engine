@@ -182,6 +182,6 @@ def query_lsi_stored(query, con, filename, stop_list=default_stop_list, num_matc
 	data_lsi = lsi[data_tfidf]
 	sims = [top_n(index[doc], num_matches) for doc in data_lsi]
 	sims_id = [[(id_mapping[tup[0]][0], tup[1]) for tup in sim] for sim in sims]
-	return sims
+	return (sims, sims_id)
 					
 	
