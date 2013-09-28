@@ -7,13 +7,14 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 #set up DB connection
 con = db.con;
 #set our query to build model
-query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"
+query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 1000"
 #set filename
 filename = 'testing'
 	
 #(corpus, dictnry, id_mapping) = _.get_corpus_id(query, con, _.default_stop_list, 'testing3')
-query = _.query_lsi_stored(query, con, 'testing2', _.default_stop_list, 5)
-print query
+(l_corpus, tfidf, lsi, index, dictnry, id_mapping) = _.model_lsi_id(query, con, filename='testing3')
+(sims, sims_id) = _.query_lsi_stored_id(query, con, 'testing3', _.default_stop_list, 5)
+print sims_id
 
 
 """

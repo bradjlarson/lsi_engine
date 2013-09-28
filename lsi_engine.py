@@ -170,7 +170,7 @@ def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=d
 	return (sims, sims_id)	
 			
 #returns a list with the n best matches in tuple form, loads the objects from disk
-def query_lsi_stored(query, con, filename, stop_list=default_stop_list, num_matches=10):
+def query_lsi_stored_id(query, con, filename, vi stop_list=default_stop_list, num_matches=10):
 	dictnry = corpora.Dictionary.load('%s.dict' % filename)
 	tfidf = models.TfidfModel.load('%s.tfidf' % filename)
 	lsi = models.LsiModel.load('%s.lsi' % filename)
