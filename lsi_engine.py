@@ -106,7 +106,8 @@ def query_lsi_stored(query, con, filename, stop_list=default_stop_list, num_matc
 	data_bow = [dictnry.doc2bow(doc) for doc in data]
 	data_tfidf = tfidf[data_bow]
 	data_lsi = lsi[data_tfidf]
-	print data_lsi
+	for data in data_lsi:
+		print data
 	sims = [top_n(index[doc], num_matches) for doc in data_lsi]
 	return sims
 
