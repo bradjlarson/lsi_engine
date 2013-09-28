@@ -129,7 +129,8 @@ def to_texts_id(docs, stop_list=default_stop_list):
 
 #this converts a collection of tokens to a bag of words count and retains the id value
 def to_dict_id(texts, filename=False):
-	dictnry = corpora.Dictionary(text[1] for text in texts).filter_extremes(5, 0.5, 150000)
+	dictnry = corpora.Dictionary(text[1] for text in texts)
+	dictnry.filter_extremes(5, 0.5)
 	if filename:
 		dictnry.save('%s.dict' % filename)
 	return dictnry
