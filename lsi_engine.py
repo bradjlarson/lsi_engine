@@ -203,7 +203,7 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 #step 8: reduce list by summing (ln(1-p) - ln(p)) across items
 #step 9: return prob as (1 / 1 + e^(result from step 8))
 
-def to_bin_bow(bows):
+def to_bin_bows(bows):
 	return [binary_bow(bow) for bow in bows]
 
 def binary_bow(b_o_w):
