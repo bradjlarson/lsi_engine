@@ -1,6 +1,7 @@
 from __future__ import division
 from gensim import corpora, models, similarities
 from urllib import unquote_plus
+import math
 import MySQLdb as mdb
 import sys
 import cPickle
@@ -189,6 +190,19 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	#old: sims_id = [[(id_mapping[tup[0]][0], tup[1]) for tup in sim] for sim in sims]
 	return (sims, sims_id)
 	
+def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
+	if filename:
+		id_mapping = cPickle.load(open('%s.idmap' % filename, 'rb'))
+		corpus = corpora.MmCorpus('%s.mm' % filename)
+	models = []	
+	for sim in sims:
+		in_stmt = reduce(lambda x, y: x + str(y[0]) + ", ", sim, "")
+		in_stmt = in_stmt[:-2]
+		sql = "select article_id, like_flag from unique_likes where article_id in(%s)" % in_stmt
+		print sql
+	 	#models.append(build_nb(sql, con, id_mapping, corpus))
+	return models
+	
 #thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
 #would then have another dictionary as the value, with keys for any number of values
 #each of those values could then be predicted against
@@ -250,9 +264,8 @@ def word_percent_dict(bin_bows):
 				word_dict[w[0]] += 1
 			else:
 				word_dict[w[0]] = 1
-	#p_word_dict = {i: get_word_percent(v, num_articles) for i, v in word_dict}
-	#return (word_dict, p_word_dict)
-	return word_dict
+	p_word_dict = {i: get_word_percent(word_dict[i], num_articles) for i in word_dict}
+	return (word_dict, p_word_dict)
 				
 def get_word_percent(num, total, minm=5, default=0.5):
 	if num >= minm:
@@ -275,6 +288,19 @@ def bayes_prob_dict(yes_probs, no_probs):
 						
 #def nb_classifier(likes, dislikes):
 	#this takes binary bag of words
+	
+def build_nb(query, con, id_mapping, corpus):
+	(likes, dislikes) = nb_get_bow(query, con, id_mapping, corpus)
+	return bayes_prob_dict(word_percent_dict(likes), word_percent_dict(dislikes))	
+	
+def nb_classify(bayes, b_o_w):
+	probs = [bayes[w] for w in b_o_w if w in bayes]
+	nu = reduce(lambda x, y: x + y, probs, 0)
+	return (1 / (1 + exp(nu)))
+	
+def ln_p(prob):	
+	return (math.log(1- prob) - math.log(prob))
+		
 	
 		
 	
