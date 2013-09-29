@@ -251,7 +251,8 @@ def word_percent_dict(bin_bows):
 			else:
 				word_dict[w[0]] = 1
 	#p_word_dict = {i: get_word_percent(v, num_articles) for i, v in word_dict}
-	return (word_dict, p_word_dict)
+	#return (word_dict, p_word_dict)
+	return word_dict
 				
 def get_word_percent(num, total, minm=5, default=0.5):
 	if num >= minm:
