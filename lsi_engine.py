@@ -216,8 +216,8 @@ def one_or_zero(num):
 		return 0
 
 def split_by_like(docs):
-	likes = [doc['article_id'] for doc in docs if doc['like_flag'] = 1]
-	dislikes = [doc['article_id'] for doc in docs if doc['like_flag'] = 0]
+	likes = [doc['article_id'] for doc in docs if doc['like_flag'] == 1]
+	dislikes = [doc['article_id'] for doc in docs if doc['like_flag'] == 0]
 	return (likes, dislikes)
 	
 def to_index_id(article_ids, id_mapping):
