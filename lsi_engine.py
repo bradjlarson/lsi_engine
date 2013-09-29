@@ -167,7 +167,7 @@ def model_lsi_id(query, con, filename=False, stop_list=default_stop_list, n_topi
 #returns a list with the n best matches in tuple form, requires you to pass in the objects
 def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=default_stop_list, num_matches=10):
 	docs = prep_data_id(query, con)
-	texts = to_texts_id(docs, stop_list)
+	texts = to_texts_id(docs)
 	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
 	corpus_tfidf = tfidf[corpus]
 	corpus_lsi = lsi[corpus_tfidf]
