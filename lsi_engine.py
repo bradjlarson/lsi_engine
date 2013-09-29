@@ -203,7 +203,7 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 #step 9: return prob as (1 / 1 + e^(result from step 8))
 
 def binary_bow(b_o_w):
-	return [(w[0], one_or_zero(w[1])) for word in b_o_w]
+	return [(w[0], one_or_zero(w[1])) for w in b_o_w]
 
 def one_or_zero(num):
 	if num >= 1:
