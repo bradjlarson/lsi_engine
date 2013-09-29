@@ -164,7 +164,6 @@ def model_lsi_id(query, con, filename=False, stop_list=default_stop_list, n_topi
 def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=default_stop_list, num_matches=10):
 	texts = to_texts_id(prep_data_id(query, con), stop_list)
 	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
-	print query_id_mapping
 	corpus_tfidf = tfidf[corpus]
 	corpus_lsi = lsi[corpus_tfidf]
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
@@ -180,12 +179,33 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	id_mapping = cPickle.load(open('%s.idmap' % filename, 'rb'))
 	texts = to_texts_id(prep_data_id(query, con), stop_list)
 	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
-	print query_id_mapping
 	corpus_tfidf = tfidf[corpus]
 	corpus_lsi = lsi[corpus_tfidf]
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
 	sims_id = [[query_id_mapping[sims.index(sim)][0], [(id_mapping[tup[0]][0], tup[1]) for tup in sim]] for sim in sims]
 	#old: sims_id = [[(id_mapping[tup[0]][0], tup[1]) for tup in sim] for sim in sims]
 	return (sims, sims_id)
-					
 	
+#thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
+#would then have another dictionary as the value, with keys for any number of values
+#each of those values could then be predicted against
+
+#after i get the similar articles, i need to pull the like, dislike information
+#step 1: get similar articles from dict
+#step 2: split into like list, dislike list
+#step 3: map list to word counts from corpus
+#step 4: map word counts to binary has word/doesn't
+#step 5: reduces the list to a single sparse vector, summing by word across articles
+#step 6: reduce that list to a % of category
+#step 7: for each word in the text to be classified, map to (% of like / % of like + % of dislike)
+#step 8: reduce list by summing (ln(1-p) - ln(p)) across items
+#step 9: return prob as (1 / 1 + e^(result from step 8))
+
+	
+
+
+
+
+
+
+
