@@ -7,7 +7,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 #set up DB connection
 con = db.con;
 #set our query to build model
-query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 1000"
+query = "select article_id, article_text from jobs.testing_corpus order by RAND()"
 #set filename
 filename = 'testing'
 	
