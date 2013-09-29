@@ -139,12 +139,13 @@ def to_dict_id(texts, filename=False):
 def to_corpus_id(dictnry, texts, filename=False):
 	corpus_id = [[text[0], dictnry.doc2bow(text[1])] for text in texts]
 	id_mapping = [doc[0] for doc in corpus_id]
-	id_dict = {i : {'article_id' : v[0]} for i, v in enumerate(corpus_id)} #could include this as well, but may as well just calc on the fly: , 'bin_bow' : binary_bow(v[1])
+	id_mapping = {v : i for i, v in enumerate(id_mapping)}
+	#id_dict = {i : {'article_id' : v[0]} for i, v in enumerate(corpus_id)} #could include this as well, but may as well just calc on the fly: , 'bin_bow' : binary_bow(v[1])
 	corpus = [doc[1] for doc in corpus_id]
 	if filename:
 		corpora.MmCorpus.serialize('%s.mm' % filename, corpus)
 		cPickle.dump(id_mapping, open('%s.idmap' % filename, 'wb'))
-	return (corpus, id_mapping, id_dict)
+	return (corpus, id_mapping)
 	
 #this returns a corpus and dictionary and id-to-index mapping based on a query and a connection
 #It also provides options for a stop list and the ability to save the dictionary and corpus	
@@ -153,11 +154,11 @@ def get_corpus_id(query, con, stop_list=default_stop_list, filename=False):
 	texts = to_texts_id(docs, stop_list)
 	dictnry = to_dict_id(texts, filename)
 	(corpus_only, id_mapping, id_dict) = to_corpus_id(dictnry, texts, filename)
-	return (corpus_only, dictnry, id_mapping, id_dict)
+	return (corpus_only, dictnry, id_mapping)
 	
 #allows you to build a LSI model from just a query and a MySQL connection and then map results back to your DB
 def model_lsi_id(query, con, filename=False, stop_list=default_stop_list, n_topics=150):
-	(corpus, dictnry, id_mapping) = get_corpus_id(query, con, stop_list, filename)
+	(corpus, dictnry, id_mapping, ) = get_corpus_id(query, con, stop_list, filename)
 	(l_corpus, tfidf, lsi, index) = build_lsi(corpus, dictnry, filename, n_topics)
 	return (l_corpus, tfidf, lsi, index, dictnry, id_mapping)
 
@@ -202,6 +203,9 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 #step 8: reduce list by summing (ln(1-p) - ln(p)) across items
 #step 9: return prob as (1 / 1 + e^(result from step 8))
 
+def to_bin_bow(bows):
+	return [binary_bow(bow) for bow in bows]
+
 def binary_bow(b_o_w):
 	return [(w[0], one_or_zero(w[1])) for w in b_o_w]
 
@@ -211,6 +215,31 @@ def one_or_zero(num):
 	else:
 		return 0
 
+def split_by_like(docs):
+	likes = [doc['article_id'] for doc in docs if doc['like_flag'] = 1]
+	dislikes = [doc['article_id'] for doc in docs if doc['like_flag'] = 0]
+	return (likes, dislikes)
+	
+def to_index_id(article_ids, id_mapping):
+	return [id_mapping[article_id] for article_id in article_ids]
 
+def id_to_bow(index_ids, corpus):		
+	return [corpus[index_id] for index_id in index_ids]
+	
+def article_to_bow(articles, id_mapping, corpus):
+	index_ids = to_index_id(articles, id_mapping)
+	bows = id_to_bow(index_ids, corpus)
+	return bows
+
+def nb_get_bow(query, con, id_mapping, corpus):
+	articles = get_data(query, con)
+	(likes, dislikes) = split_by_like(articles)
+	like_bows = article_to_bow(likes, id_mapping, corpus)
+	dislike_bows = 	article_to_bow(dislikes, id_mapping, corpus)
+	bin_like_bows = to_bin_bows(like_bows)
+	bin_dislike_bows = to_bin_bows(dislike_bows)
+	return (bin_like_bows, bin_dislike_bows)
+	
+	
 
 
