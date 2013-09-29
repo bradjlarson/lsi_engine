@@ -173,6 +173,9 @@ def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=d
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
 	sims_id = [[query_id_mapping[sims.index(sim)][0], [(id_mapping[tup[0]][0], tup[1]) for tup in sim]] for sim in sims]
 	return (sims, sims_id)	
+	
+def invert_dict(dictnry):
+	return {dictnry[i]: i for i in dictnry}
 			
 #returns a list with the n best matches in tuple form, loads the objects from disk
 def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_matches=10):
@@ -181,12 +184,15 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	lsi = models.LsiModel.load('%s.lsi' % filename)
 	index = similarities.Similarity.load('%s.index' % filename)
 	id_mapping = cPickle.load(open('%s.idmap' % filename, 'rb'))
+	reverse_mapping = invert_dict(id_mapping)
 	texts = to_texts_id(prep_data_id(query, con), stop_list)
 	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
+	reverse_query_mapping = invert_dict(query_id_mapping)
 	corpus_tfidf = tfidf[corpus]
 	corpus_lsi = lsi[corpus_tfidf]
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
-	sims_id = [[query_id_mapping[sims.index(sim)][0], [(id_mapping[tup[0]][0], tup[1]) for tup in sim]] for sim in sims]
+	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
+	#sims_id = [[query_id_mapping[sims.index(sim)][0], [(id_mapping[tup[0]][0], tup[1]) for tup in sim]] for sim in sims]
 	#old: sims_id = [[(id_mapping[tup[0]][0], tup[1]) for tup in sim] for sim in sims]
 	return (sims, sims_id)
 	
@@ -196,7 +202,7 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 		corpus = corpora.MmCorpus('%s.mm' % filename)
 	models = []	
 	for sim in sims:
-		in_stmt = reduce(lambda x, y: x + str(y[0]) + ", ", sim, "")
+		in_stmt = reduce(lambda x, y: x + str(y[0]) + ", ", sims[sim], "")
 		in_stmt = in_stmt[:-2]
 		sql = "select article_id, like_flag from unique_likes where article_id in(%s)" % in_stmt
 		print sql
