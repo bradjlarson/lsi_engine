@@ -171,6 +171,8 @@ def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=d
 	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
 	corpus_tfidf = tfidf[corpus]
 	corpus_lsi = lsi[corpus_tfidf]
+	reverse_mapping = invert_dict(id_mapping)
+	reverse_query_mapping = invert_dict(query_id_mapping)
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
 	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
 	return (sims, sims_id)	
