@@ -166,7 +166,8 @@ def model_lsi_id(query, con, filename=False, stop_list=default_stop_list, n_topi
 
 #returns a list with the n best matches in tuple form, requires you to pass in the objects
 def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=default_stop_list, num_matches=10):
-	texts = to_texts_id(prep_data_id(query, con), stop_list)
+	docs = prep_data_id(query, con)
+	texts = to_texts_id(docs, stop_list)
 	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
 	corpus_tfidf = tfidf[corpus]
 	corpus_lsi = lsi[corpus_tfidf]
@@ -185,7 +186,8 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	index = similarities.Similarity.load('%s.index' % filename)
 	id_mapping = cPickle.load(open('%s.idmap' % filename, 'rb'))
 	reverse_mapping = invert_dict(id_mapping)
-	texts = to_texts_id(prep_data_id(query, con), stop_list)
+	docs = prep_data_id(query, con)
+	texts = to_texts_id(docs, stop_list)
 	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
 	reverse_query_mapping = invert_dict(query_id_mapping)
 	corpus_tfidf = tfidf[corpus]
