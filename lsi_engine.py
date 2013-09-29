@@ -138,7 +138,7 @@ def to_dict_id(texts, filename=False):
 #this converts a collection of tokens to an id mapping based on a dictionary as well as an id-to-index mapping
 def to_corpus_id(dictnry, texts, filename=False):
 	corpus_id = [[text[0], dictnry.doc2bow(text[1])] for text in texts]
-	id_mapping = [corpus_id.index(doc) for doc in corpus_id]
+	id_mapping = [doc[0] for doc in corpus_id]
 	id_dict = {i : v for i, v in enumerate(id_mapping)} 
 	corpus = [doc[1] for doc in corpus_id]
 	if filename:
