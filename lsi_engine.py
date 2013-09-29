@@ -173,13 +173,11 @@ def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=d
 	corpus_lsi = lsi[corpus_tfidf]
 	reverse_mapping = invert_dict(id_mapping)
 	reverse_query_mapping = invert_dict(query_id_mapping)
+	index.num_best = 
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
 	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
 	return (sims, sims_id)	
-	
-def invert_dict(dictnry):
-	return {dictnry[i]: i for i in dictnry}
-			
+				
 #returns a list with the n best matches in tuple form, loads the objects from disk
 def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_matches=10):
 	dictnry = corpora.Dictionary.load('%s.dict' % filename)
@@ -228,34 +226,46 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 #step 8: reduce list by summing (ln(1-p) - ln(p)) across items
 #step 9: return prob as (1 / 1 + e^(result from step 8))
 
+#this takes a dictionary and reverses the keys and values
+def invert_dict(dictnry):
+	return {dictnry[i]: i for i in dictnry}
+
+#this takes a bag of words list, and sets the tuple to either the word is present in the doc (1) or not (0)
 def to_bin_bows(bows):
 	return [binary_bow(bow) for bow in bows]
 
+#this does the actual conversion to binary bag of word
 def binary_bow(b_o_w):
 	return [(w[0], one_or_zero(w[1])) for w in b_o_w]
 
+#this converts a number to either one or zero - this should almost always be 1
 def one_or_zero(num):
 	if num >= 1:
 		return 1
 	else:
 		return 0
 
+#this takes a dictionary, and splits out the article_ids into two lists, one for likes and the other for dislikes
 def split_by_like(docs):
 	likes = [doc['article_id'] for doc in docs if doc['like_flag'] == 1]
 	dislikes = [doc['article_id'] for doc in docs if doc['like_flag'] == 0]
 	return (likes, dislikes)
-	
+
+#the returns a list of the corpus id's (indices) for a given article_id	
 def to_index_id(article_ids, id_mapping):
 	return [id_mapping[article_id] for article_id in article_ids]
 
+#this takes a list of corpus id's (indices) and returns a list of the bag of words for those id's
 def id_to_bow(index_ids, corpus):		
 	return [corpus[index_id] for index_id in index_ids]
-	
+
+#this returns a list of bag of words that correspond to a set of article_id's	
 def article_to_bow(articles, id_mapping, corpus):
 	index_ids = to_index_id(articles, id_mapping)
 	bows = id_to_bow(index_ids, corpus)
 	return bows
 
+#this returns a set of like and dislike bag of word lists based on a query
 def nb_get_bow(query, con, id_mapping, corpus):
 	articles = get_data(query, con)
 	(likes, dislikes) = split_by_like(articles)
@@ -264,7 +274,8 @@ def nb_get_bow(query, con, id_mapping, corpus):
 	bin_like_bows = to_bin_bows(like_bows)
 	bin_dislike_bows = to_bin_bows(dislike_bows)
 	return (bin_like_bows, bin_dislike_bows)
-	
+
+#this returns a dictionary with % of documents that a word appears in
 def word_percent_dict(bin_bows):
 	num_articles = len(bin_bows)
 	word_dict = {}
@@ -275,39 +286,43 @@ def word_percent_dict(bin_bows):
 			else:
 				word_dict[w[0]] = 1
 	p_word_dict = {i: get_word_percent(word_dict[i], num_articles) for i in word_dict}
-	return (word_dict, p_word_dict)
-				
+	return p_word_dict
+	
+#this returns a percentage if it meets some thresholds, otherwise 0.5					
 def get_word_percent(num, total, minm=5, default=0.5):
 	if num >= minm:
 		return (num / total)
 	else:
 		return default
-		
+
+#this returns the probabiliy of a "yes", given two occurence rates
 def get_word_prob(yes_percent, no_percent):
 	return (yes_percent / (yes_percent + no_percent)) 		
 
+#this checks if a key is in a dictionary, if it is, returns the value, otherwise returns a default value
 def default_to(key, dictnry, default):
 	if key in dictnry:
 		return dictnry[key]
 	else:
 		return default
-							
+
+#this combines two sets of word occurences rates, and generates a probabilty of "yes" for each word							
 def bayes_prob_dict(yes_probs, no_probs):
 	prob_dict = {word: get_word_prob(default_to(word, yes_probs, 0.01), default_to(word, no_probs, 0.01)) for word in set(yes_probs.keys() + no_probs.keys())}
 	return prob_dict
-						
-#def nb_classifier(likes, dislikes):
-	#this takes binary bag of words
-	
+
+#this builds a probability dictionary given a set of articles							
 def build_nb(query, con, id_mapping, corpus):
 	(likes, dislikes) = nb_get_bow(query, con, id_mapping, corpus)
 	return bayes_prob_dict(word_percent_dict(likes), word_percent_dict(dislikes))	
-	
+
+#this returns a probability that a bag of words is a "yes"	
 def nb_classify(bayes, b_o_w):
 	probs = [bayes[w] for w in b_o_w if w in bayes]
 	nu = reduce(lambda x, y: x + y, probs, 0)
 	return (1 / (1 + exp(nu)))
 	
+#this is used when combining the individual word probabilities, in lieu of multiplying them all together, which avoids issues with float	
 def ln_p(prob):	
 	return (math.log(1- prob) - math.log(prob))
 		
