@@ -4,6 +4,7 @@ import MySQLdb as mdb
 import sys
 import cPickle
 import logging
+from __future__ import division
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 default_stop_list = set("the of and he our ? had it?s there time out know  one you're what just so get like could people \
@@ -239,6 +240,42 @@ def nb_get_bow(query, con, id_mapping, corpus):
 	bin_like_bows = to_bin_bows(like_bows)
 	bin_dislike_bows = to_bin_bows(dislike_bows)
 	return (bin_like_bows, bin_dislike_bows)
+	
+def word_percent_dict(bin_bows):
+	num_articles = len(bin_bows)
+	word_dict = {}
+	for bow in bin_bows:
+		for w in bow:
+			if w in word_dict:
+				word_dict[w] += 1
+			else:
+				word_dict[w] = 1
+	p_word_dict = {i: get_word_percent(v, num_articles) for i, v in word_dict}
+	return (word_dict, p_word_dict)
+				
+def get_word_percent(num, total, minm=5, default=0.5):
+	if num >= minm:
+		return (num / total)
+	else:
+		return default
+		
+def get_word_prob(yes_percent, no_percent):
+	return (yes_percent / (yes_percent + no_percent)) 		
+
+def default_to(key, dictnry, default):
+	if key in dictnry:
+		return dictnry[key]
+	else:
+		return default
+							
+def bayes_prob_dict(yes_probs, no_probs):
+	prob_dict = {word: get_word_prob(default_to(word, yes_probs, 0.01), default_to(word, no_probs, 0.01)) for word in set(yes_probs.keys() + no_probs.keys())}
+	return prob_dict
+						
+#def nb_classifier(likes, dislikes):
+	#this takes binary bag of words
+	
+		
 	
 	
 
