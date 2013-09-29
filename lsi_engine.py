@@ -1,10 +1,10 @@
+from __future__ import division
 from gensim import corpora, models, similarities
 from urllib import unquote_plus
 import MySQLdb as mdb
 import sys
 import cPickle
 import logging
-from __future__ import division
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 default_stop_list = set("the of and he our ? had it?s there time out know  one you're what just so get like could people \
