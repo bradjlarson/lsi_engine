@@ -246,7 +246,7 @@ def word_percent_dict(bin_bows):
 	word_dict = {}
 	for bow in bin_bows:
 		for w in bow:
-			if w in word_dict:
+			if w[0] in word_dict:
 				word_dict[w[0]] += 1
 			else:
 				word_dict[w[0]] = 1
