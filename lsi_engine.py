@@ -139,7 +139,7 @@ def to_dict_id(texts, filename=False):
 def to_corpus_id(dictnry, texts, filename=False):
 	corpus_id = [[text[0], dictnry.doc2bow(text[1])] for text in texts]
 	id_mapping = [doc[0] for doc in corpus_id]
-	id_dict = {i : {'article_id' : v[0], 'bin_bow' : binary_bow(v[1])} for i, v in enumerate(corpus_id)} 
+	id_dict = {i : {'article_id' : v[0]} for i, v in enumerate(corpus_id)} #could include this as well, but may as well just calc on the fly: , 'bin_bow' : binary_bow(v[1])
 	corpus = [doc[1] for doc in corpus_id]
 	if filename:
 		corpora.MmCorpus.serialize('%s.mm' % filename, corpus)
