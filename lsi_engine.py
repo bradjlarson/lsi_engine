@@ -193,7 +193,7 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	reverse_query_mapping = invert_dict(q_id_mapping)
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
 	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
-	return (q_corpus, q_id_mapping, sims_id)
+	return (q_corpus, q_id_mapping, simprins_id)
 	
 def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 	if filename:
@@ -204,7 +204,7 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 		in_stmt = reduce(lambda x, y: x + str(y[0]) + ", ", sims[sim], "")
 		in_stmt = in_stmt[:-2]
 		sql = "select article_id, like_flag from unique_likes where article_id in(%s)" % in_stmt
-		models.append([sims.index(sim), sql])
+		sql_stmts.append([sims.index(sim), sql])
 	 	#models.append(build_nb(sql, con, id_mapping, corpus))
 	return sql_stmts
 	
