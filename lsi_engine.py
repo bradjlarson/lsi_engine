@@ -331,7 +331,7 @@ def build_nb(query, con, id_mapping, corpus):
 def nb_classify(bayes, b_o_w):
 	probs = [bayes[w] for w in b_o_w if w in bayes]
 	nu = reduce(lambda x, y: x + y, probs, 0)
-	return (1 / (1 + exp(nu)))
+	return (1 / (1 + math.exp(nu)))
 	
 #this is used when combining the individual word probabilities, in lieu of multiplying them all together, which avoids issues with float	
 def ln_p(prob):	
