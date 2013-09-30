@@ -267,7 +267,7 @@ def to_index_id(article_id, id_mapping):
 	return id_mapping[article_id]
 
 #this takes a list of corpus id's (indices) and returns a list of the bag of words for those id's
-def id_to_bow(index_ids, corpus):		
+def id_to_bow(index_id, corpus):		
 	return corpus[index_id]
 
 #this returns a list of bag of words that correspond to a set of article_id's	
