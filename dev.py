@@ -15,6 +15,10 @@ filename = 'testing3'
 query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"
 #get the 100 most similar documents for each document queried against the model
 (q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=100)
+probs = _.classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus)
+print probs
+
+"""
 reverse_q_mapping = _.invert_dict(q_id_mapping)
 #this is a bit manual right now, but in the future there will be a seamless bridge
 sql_stmts = _.bridge_lsi_nb(sims_id, id_mapping, corpus)
@@ -32,9 +36,6 @@ query = "select article_id, article_text from jobs.testing_corpus order by RAND(
 (sims, sims_id) = _.query_lsi_stored_id(query, con, 'testing3', _.default_stop_list, 5)
 print sims_id
 
-
-
-"""
 #get the initial corpus
 (corpus, dictnry) = lsi_engine.get_corpus(query, con, lsi_engine.stop_list, filename)
 #build the models and index, with 150 features (or topics)

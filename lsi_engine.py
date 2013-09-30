@@ -187,28 +187,39 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	reverse_mapping = invert_dict(id_mapping)
 	docs = prep_data_id(query, con)
 	texts = to_texts_id(docs, stop_list)
-	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
-	reverse_query_mapping = invert_dict(query_id_mapping)
+	(q_corpus, q_id_mapping) = to_corpus_id(dictnry, texts)
+	reverse_query_mapping = invert_dict(q_id_mapping)
 	corpus_tfidf = tfidf[corpus]
 	corpus_lsi = lsi[corpus_tfidf]
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
 	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
 	#sims_id = [[query_id_mapping[sims.index(sim)][0], [(id_mapping[tup[0]][0], tup[1]) for tup in sim]] for sim in sims]
 	#old: sims_id = [[(id_mapping[tup[0]][0], tup[1]) for tup in sim] for sim in sims]
-	return (corpus, query_id_mapping, sims_id)
+	return (q_corpus, q_id_mapping, sims_id)
 	
 def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 	if filename:
 		id_mapping = cPickle.load(open('%s.idmap' % filename, 'rb'))
 		corpus = corpora.MmCorpus('%s.mm' % filename)
-	models = []	
+	sql_stmts = []	
 	for sim in sims:
 		in_stmt = reduce(lambda x, y: x + str(y[0]) + ", ", sims[sim], "")
 		in_stmt = in_stmt[:-2]
 		sql = "select article_id, like_flag from unique_likes where article_id in(%s)" % in_stmt
-		models.append(sql)
+		models.append([sims.index(sim), sql])
 	 	#models.append(build_nb(sql, con, id_mapping, corpus))
-	return models
+	return sql_stmts
+	
+def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus):
+	nb_models = [[stmt[0], build_nb(stmt, con, id_mapping, corpus)] for stmt in sql_stmts]
+	add_bow = [[model[0], model[1], article_to_bow(model[0], q_id_mapping, q_corpus)] for model in nb_models]
+	probs = [[article[0], nb_classify(article[1], article[2])] for article in add_bow]
+	return probs	
+
+def classifer(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=False):
+	sql = bridge_lsi_nb(sims, id_mapping, corpus, filename)
+	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus)
+	return probs
 	
 #thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
 #would then have another dictionary as the value, with keys for any number of values
