@@ -162,7 +162,7 @@ def get_corpus_id(query, con, stop_list=default_stop_list, filename=False):
 def model_lsi_id(query, con, filename=False, stop_list=default_stop_list, n_topics=150):
 	(corpus, dictnry, id_mapping, ) = get_corpus_id(query, con, stop_list, filename)
 	(l_corpus, tfidf, lsi, index) = build_lsi(corpus, dictnry, filename, n_topics)
-	return (l_corpus, tfidf, lsi, index, dictnry, id_mapping)
+	return (l_corpus, corpus, tfidf, lsi, index, dictnry, id_mapping)
 
 #returns a list with the n best matches in tuple form, requires you to pass in the objects
 def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=default_stop_list, num_matches=10):
