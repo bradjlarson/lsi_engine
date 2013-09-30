@@ -189,6 +189,8 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	texts = to_texts_id(docs, stop_list)
 	(q_corpus, q_id_mapping) = to_corpus_id(dictnry, texts)
 	reverse_query_mapping = invert_dict(q_id_mapping)
+	print reverse_mapping
+	print reverse_query_mapping
 	corpus_tfidf = tfidf[q_corpus]
 	corpus_lsi = lsi[corpus_tfidf]
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
