@@ -209,7 +209,7 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 	return sql_stmts
 	
 def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus):
-	nb_models = [[stmt[0], build_nb(stmt, con, id_mapping, corpus)] for stmt in sql_stmts]
+	nb_models = [[stmt[0], build_nb(stmt[1], con, id_mapping, corpus)] for stmt in sql_stmts]
 	add_bow = [[model[0], model[1], article_to_bow(model[0], q_id_mapping, q_corpus)] for model in nb_models]
 	probs = [[article[0], nb_classify(article[1], article[2])] for article in add_bow]
 	return probs	
@@ -259,17 +259,20 @@ def split_by_like(docs):
 	dislikes = [doc['article_id'] for doc in docs if doc['like_flag'] == 0]
 	return (likes, dislikes)
 
+#for these functions, i've transformed them to work on a single article_id at a time.
+#I may need to go back and convert them to iterators, we'll see
+
 #the returns a list of the corpus id's (indices) for a given article_id	
-def to_index_id(article_ids, id_mapping):
-	return [id_mapping[article_id] for article_id in article_ids]
+def to_index_id(article_id, id_mapping):
+	return id_mapping[article_id]
 
 #this takes a list of corpus id's (indices) and returns a list of the bag of words for those id's
 def id_to_bow(index_ids, corpus):		
-	return [corpus[index_id] for index_id in index_ids]
+	return corpus[index_id]
 
 #this returns a list of bag of words that correspond to a set of article_id's	
 def article_to_bow(articles, id_mapping, corpus):
-	index_ids = to_index_id(articles, id_mapping)
+	index_id = to_index_id(articles, id_mapping)
 	bows = id_to_bow(index_ids, corpus)
 	return bows
 
