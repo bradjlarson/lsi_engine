@@ -214,7 +214,7 @@ def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus):
 	probs = [[article[0], nb_classify(article[1], article[2])] for article in add_bow]
 	return probs	
 
-def classifer(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=False):
+def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=False):
 	sql = bridge_lsi_nb(sims, id_mapping, corpus, filename)
 	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus)
 	return probs
