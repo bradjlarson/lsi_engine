@@ -204,7 +204,7 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 		in_stmt = reduce(lambda x, y: x + str(y[0]) + ", ", sims[sim], "")
 		in_stmt = in_stmt[:-2]
 		sql = "select article_id, like_flag from unique_likes where article_id in(%s)" % in_stmt
-		sql_stmts.append([sims.index(sim), sql])
+		sql_stmts.append([sim, sql])
 	 	#models.append(build_nb(sql, con, id_mapping, corpus))
 	return sql_stmts
 	
