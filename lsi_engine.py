@@ -327,13 +327,21 @@ def build_nb(query, con, id_mapping, corpus):
 	(likes, dislikes) = nb_get_bow(query, con, id_mapping, corpus)
 	return bayes_prob_dict(word_percent_dict(likes), word_percent_dict(dislikes))	
 
+def cutoffs(num, upper=15, lower=-15):
+	if num > upper:
+		return upper
+	else if num < lower:
+		return lower
+	else:
+		return num
+
 #this returns a probability that a bag of words is a "yes"	
 def nb_classify(bayes, b_o_w):
 	probs = [bayes[w[0]] for w in b_o_w if w[0] in bayes]
 	print probs
 	nu = reduce(lambda x, y: x + ln_p(y), probs, 0)
-	print nu
-	return nu
+	nu = cutoffs(nu)
+	return (1 / (1 + math.exp(nu)))
 	
 #this is used when combining the individual word probabilities, in lieu of multiplying them all together, which avoids issues with float	
 def ln_p(prob):	
