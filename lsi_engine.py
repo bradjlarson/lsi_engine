@@ -273,8 +273,8 @@ def id_to_bow(index_ids, corpus):
 #this returns a list of bag of words that correspond to a set of article_id's	
 def article_to_bow(articles, id_mapping, corpus):
 	index_id = to_index_id(articles, id_mapping)
-	bows = id_to_bow(index_ids, corpus)
-	return bows
+	bow = id_to_bow(index_id, corpus)
+	return bow
 
 #this returns a set of like and dislike bag of word lists based on a query
 def nb_get_bow(query, con, id_mapping, corpus):
