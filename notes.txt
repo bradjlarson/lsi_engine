@@ -1,0 +1,21 @@
+Improved Naive Bayesian Classifiers:
+
+- Currently, Naive Bayesian Classifiers serve as an effective classification tool across a broad set of domains. They work by surveying a set of observations, computing the likelihood of a given outcome based on a set of features, and then combining those likelihoods to get a final prediction for a particular outcome. 
+
+However, as the set of data grows larger, the likelihood of each term to apply exclusively to any one outcome becomes smaller. 
+
+When the set of observations is strictly confined to a particular domain, this works, and scales, fine. However, since independence is also assumed in NB models, this causes 
+However, a powerful tool used in other types of modeling is called segmentation. The theory is that certain features can drive different 
+
+What I am proposing is a variation on the N-gram. For each record to be classified, the goal is to find the most similar observations in the data set, and only use those to build the NB model and then classify the record. For text classification this is done through the use of a LSI model (via Gensim). If you were using a NB model in a more traditional realm, you might have n discrete variables, each with m possibilities. Here, it's a little more difficult to find the most similar documents. I've found that, especially as n increases, the number of records sharing the exact same set of values is quite small. For instance, if you had 16 variables, the number of observations having the same 16 values will likely be pretty small - often too small to reliably build a classifier. However, what if you only used 15, or 10, 5, 2 or even 1 one of those variables? Even using 1 of the variables would limit the population, giving us records that are more similar than the overall population (by definition, since all records have at least 1 value in common). 
+
+Some theories on how to approach the computation:
+	- Calculate the probability for each population that shares y values with the record to be classified. The higher the value of y, the better fit. The higher y is, the better the accuracy should be. Make sure that the number of overall records used in the classifier is over some threshold (50, 100, 200?)
+	- for each set of observations that share a single value in common - calculate the probability. If you have n variables, you will end up with n probability - one for each variable pop. You should be able to rank these in some fashion by looking at the overall predictiveness of the value in question. You could also feed these n predictions into a classifier, allowing the classifier to figure out which variable is most/least predictive
+	- for texts, find articles that have x% of words in common, as x increases, the better fit you should have
+	
+	
+	- this a combination of n-grams, segmentation, bayesian probabilities, empirical probabilities, and topic modeling
+	
+	- for the non-text version, i'd need to create all of the n-grams for that record
+
