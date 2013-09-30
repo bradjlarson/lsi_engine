@@ -9,13 +9,34 @@ con = db.con;
 #set our query to build model
 query = "select article_id, article_text from jobs.testing_corpus order by RAND()"
 #set filename
-filename = 'testing'
+filename = 'testing3'
+#this returns an lsi transformed corpus, the original corpus, the TF-IDF and LSI models, index, dictnry, and article_id to index id dictionary
+(l_corpus, o_corpus, tfidf, lsi, index, dictnry, id_mapping) = _.model_lsi_id(query, con, filename)
+query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"
+#get the 100 most similar documents for each document queried against the model
+(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, num_matches=100)
+reverse_q_mapping = invert_dict(q_id_mapping)
+#this is a bit manual right now, but in the future there will be a seamless bridge
+sql_stmts = _.bridge_lsi_nb(sims, id_mapping, corpus)
+for stmt in sql_stmts:
+	model = build_nb(stmt, con, id_mapping, o_corpus)
+	index_id = reverse_q_mapping[sql_stmts.index(stmt)]
+	this_bow = q_corpus[index_id]
+	prob = nb_classify(model, this_bow)
+	print "The prob that you will like this article is: %.4f" % prob
 	
-#(corpus, dictnry, id_mapping) = _.get_corpus_id(query, con, _.default_stop_list, 'testing3')
-(l_corpus, tfidf, lsi, index, dictnry, id_mapping) = _.model_lsi_id(query, con, filename='testing3')
+
+
+
+
+
+
+#(corpus, dictnry, id_mapping, id_dict) = _.get_corpus_id(query, con, _.default_stop_list, 'testing3')
+
 query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"
 (sims, sims_id) = _.query_lsi_stored_id(query, con, 'testing3', _.default_stop_list, 5)
 print sims_id
+
 
 
 """
