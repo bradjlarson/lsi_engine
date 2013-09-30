@@ -225,7 +225,7 @@ def save_results(con, probs):
 	with con:
 		cur = con.cursor(mdb.cursors.DictCursor)
 	for prob in probs:
-		sql = "insert into testing_preds (article_id, prediction) values (%s, %.4f)" % (prob[0], prob[1])
+		sql = "insert into jobs.testing_preds (article_id, prediction) values (%s, %.4f)" % (prob[0], prob[1])
 		print sql
 		#cur.execute(sql)				
 	
