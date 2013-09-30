@@ -15,7 +15,7 @@ filename = 'testing3'
 query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"
 #get the 100 most similar documents for each document queried against the model
 (q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=100)
-reverse_q_mapping = invert_dict(q_id_mapping)
+reverse_q_mapping = _.invert_dict(q_id_mapping)
 #this is a bit manual right now, but in the future there will be a seamless bridge
 sql_stmts = _.bridge_lsi_nb(sims, id_mapping, corpus)
 print sql_stmts
