@@ -18,6 +18,7 @@ query = "select article_id, article_text from jobs.testing_corpus order by RAND(
 reverse_q_mapping = invert_dict(q_id_mapping)
 #this is a bit manual right now, but in the future there will be a seamless bridge
 sql_stmts = _.bridge_lsi_nb(sims, id_mapping, corpus)
+print sql_stmts
 for stmt in sql_stmts:
 	model = build_nb(stmt, con, id_mapping, o_corpus)
 	index_id = reverse_q_mapping[sql_stmts.index(stmt)]
