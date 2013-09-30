@@ -25,12 +25,6 @@ for stmt in sql_stmts:
 	prob = nb_classify(model, this_bow)
 	print "The prob that you will like this article is: %.4f" % prob
 	
-
-
-
-
-
-
 #(corpus, dictnry, id_mapping, id_dict) = _.get_corpus_id(query, con, _.default_stop_list, 'testing3')
 
 query = "select article_id, article_text from jobs.testing_corpus order by RAND() limit 5"

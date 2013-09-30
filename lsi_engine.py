@@ -325,6 +325,8 @@ def nb_classify(bayes, b_o_w):
 #this is used when combining the individual word probabilities, in lieu of multiplying them all together, which avoids issues with float	
 def ln_p(prob):	
 	return (math.log(1- prob) - math.log(prob))
+	
+	
 		
 	
 		
