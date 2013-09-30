@@ -219,6 +219,11 @@ def classifer(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=Fa
 	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus)
 	return probs
 	
+def save_results(probs):
+	for prob in probs:
+		sql = "insert into testing_preds (article_id, prediction) values (%s, %.4f)" % (prob[0], prob[1])
+		print sql			
+	
 #thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
 #would then have another dictionary as the value, with keys for any number of values
 #each of those values could then be predicted against
