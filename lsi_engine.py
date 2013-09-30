@@ -224,7 +224,7 @@ def save_results(con, probs):
 		cur = con.cursor(mdb.cursors.DictCursor)
 	for prob in probs:
 		sql = "insert into testing_preds (article_id, prediction) values (%s, %.4f)" % (prob[0], prob[1])
-		cur.execute(query)				
+		cur.execute(sql)				
 	
 #thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
 #would then have another dictionary as the value, with keys for any number of values
