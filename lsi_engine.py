@@ -174,7 +174,7 @@ def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=d
 	reverse_mapping = invert_dict(id_mapping)
 	reverse_query_mapping = invert_dict(q_id_mapping)
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
-	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
+	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim if tup[0] in reverse_mapping] for sim in sims if sims.index(sim) in reverse_query_mapping}
 	return (q_corpus, q_id_mapping, sims_id)	
 				
 #returns a list with the n best matches in tuple form, loads the objects from disk
@@ -192,7 +192,7 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	reverse_mapping = invert_dict(id_mapping)
 	reverse_query_mapping = invert_dict(q_id_mapping)
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
-	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
+	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim if tup[0] in reverse_mapping] for sim in sims if sims.index(sim) in reverse_query_mapping}
 	return (q_corpus, q_id_mapping, simprins_id)
 	
 def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
