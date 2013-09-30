@@ -330,6 +330,7 @@ def build_nb(query, con, id_mapping, corpus):
 #this returns a probability that a bag of words is a "yes"	
 def nb_classify(bayes, b_o_w):
 	probs = [bayes[w] for w in b_o_w if w in bayes]
+	print probs
 	nu = reduce(lambda x, y: x + y, probs, 0)
 	return (1 / (1 + math.exp(nu)))
 	
