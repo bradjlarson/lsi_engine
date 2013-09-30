@@ -330,7 +330,7 @@ def build_nb(query, con, id_mapping, corpus):
 def cutoffs(num, upper=15, lower=-15):
 	if num > upper:
 		return upper
-	else if num < lower:
+	elif num < lower:
 		return lower
 	else:
 		return num
