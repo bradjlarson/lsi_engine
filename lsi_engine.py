@@ -168,14 +168,14 @@ def model_lsi_id(query, con, filename=False, stop_list=default_stop_list, n_topi
 def query_lsi_id(query, con, dictnry, tfidf, lsi, index, id_mapping, stop_list=default_stop_list, num_matches=10):
 	docs = prep_data_id(query, con)
 	texts = to_texts_id(docs)
-	(corpus, query_id_mapping) = to_corpus_id(dictnry, texts)
-	corpus_tfidf = tfidf[corpus]
+	(q_corpus, q_id_mapping) = to_corpus_id(dictnry, texts)
+	corpus_tfidf = tfidf[q_corpus]
 	corpus_lsi = lsi[corpus_tfidf]
 	reverse_mapping = invert_dict(id_mapping)
-	reverse_query_mapping = invert_dict(query_id_mapping)
+	reverse_query_mapping = invert_dict(q_id_mapping)
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
 	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
-	return (sims, sims_id)	
+	return (q_corpus, q_id_mapping, sims_id)	
 				
 #returns a list with the n best matches in tuple form, loads the objects from disk
 def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_matches=10):
@@ -184,19 +184,15 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	lsi = models.LsiModel.load('%s.lsi' % filename)
 	index = similarities.Similarity.load('%s.index' % filename)
 	id_mapping = cPickle.load(open('%s.idmap' % filename, 'rb'))
-	reverse_mapping = invert_dict(id_mapping)
 	docs = prep_data_id(query, con)
-	texts = to_texts_id(docs, stop_list)
+	texts = to_texts_id(docs)
 	(q_corpus, q_id_mapping) = to_corpus_id(dictnry, texts)
-	reverse_query_mapping = invert_dict(q_id_mapping)
-	print reverse_mapping
-	print reverse_query_mapping
 	corpus_tfidf = tfidf[q_corpus]
 	corpus_lsi = lsi[corpus_tfidf]
+	reverse_mapping = invert_dict(id_mapping)
+	reverse_query_mapping = invert_dict(q_id_mapping)
 	sims = [top_n(index[doc], num_matches) for doc in corpus_lsi]
 	sims_id = {reverse_query_mapping[sims.index(sim)] : [(reverse_mapping[tup[0]], tup[1]) for tup in sim] for sim in sims}
-	#sims_id = [[query_id_mapping[sims.index(sim)][0], [(id_mapping[tup[0]][0], tup[1]) for tup in sim]] for sim in sims]
-	#old: sims_id = [[(id_mapping[tup[0]][0], tup[1]) for tup in sim] for sim in sims]
 	return (q_corpus, q_id_mapping, sims_id)
 	
 def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
