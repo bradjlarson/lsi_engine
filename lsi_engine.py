@@ -210,7 +210,7 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 	
 def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus):
 	nb_models = [[stmt[0], build_nb(stmt[1], con, id_mapping, corpus)] for stmt in sql_stmts]
-	add_bow = [[model[0], model[1], article_to_bow(model[0], q_id_mapping, q_corpus)] for model in nb_models]
+	add_bow = [[model[0], model[1], article_to_bow([model[0]], q_id_mapping, q_corpus)] for model in nb_models]
 	probs = [[article[0], nb_classify(article[1], article[2])] for article in add_bow]
 	return probs	
 
@@ -270,12 +270,12 @@ def split_by_like(docs):
 #I may need to go back and convert them to iterators, we'll see
 
 #the returns a list of the corpus id's (indices) for a given article_id	
-def to_index_id(article_id, id_mapping):
-	return id_mapping[article_id]
+def to_index_id(article_ids, id_mapping):
+	return [id_mapping[article_id] for article_id in article_ids]
 
 #this takes a list of corpus id's (indices) and returns a list of the bag of words for those id's
-def id_to_bow(index_id, corpus):		
-	return corpus[index_id]
+def id_to_bow(index_ids, corpus):		
+	return [corpus[index_id] for index_id in index_ids]
 
 #this returns a list of bag of words that correspond to a set of article_id's	
 def article_to_bow(articles, id_mapping, corpus):
