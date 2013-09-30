@@ -332,7 +332,8 @@ def nb_classify(bayes, b_o_w):
 	probs = [bayes[w[0]] for w in b_o_w if w[0] in bayes]
 	print probs
 	nu = reduce(lambda x, y: x + ln_p(y), probs, 0)
-	return (1 / (1 + math.exp(nu)))
+	print nu
+	return nu
 	
 #this is used when combining the individual word probabilities, in lieu of multiplying them all together, which avoids issues with float	
 def ln_p(prob):	
