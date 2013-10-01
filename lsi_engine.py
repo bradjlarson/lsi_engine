@@ -221,11 +221,11 @@ def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=F
 	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus)
 	return probs
 	
-def save_results(con, probs):
+def save_results(con, probs, message):
 	with con:
 		cur = con.cursor(mdb.cursors.DictCursor)
 	for prob in probs:
-		sql = "insert into jobs.testing_preds (article_id, prediction) values (%s, %.4f);" % (prob[0], prob[1])
+		sql = "insert into jobs.testing_preds (article_id, message, prediction) values (%s, '%s', %.4f);" % (prob[0], message, prob[1])
 		#print sql
 		cur.execute(sql)				
 	
