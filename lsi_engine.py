@@ -226,7 +226,7 @@ def save_results(con, probs, message):
 		cur = con.cursor(mdb.cursors.DictCursor)
 	for prob in probs:
 		sql = "insert into jobs.testing_preds (article_id, message, prediction) values (%s, '%s', %.4f);" % (prob[0], message, prob[1])
-		#print sql
+		print sql
 		cur.execute(sql)				
 	
 #thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
