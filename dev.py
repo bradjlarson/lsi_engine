@@ -9,14 +9,22 @@ con = db.con;
 #set our query to build model
 query = "select article_id, article_text from jobs.testing_corpus order by RAND()"
 #set filename
-filename = 'testing3'
+filename = 'testing'
 #this returns an lsi transformed corpus, the original corpus, the TF-IDF and LSI models, index, dictnry, and article_id to index id dictionary
 (l_corpus, o_corpus, tfidf, lsi, index, dictnry, id_mapping) = _.model_lsi_id(query, con, filename)
 query = "select a.article_id, article_text from jobs.testing_corpus a, jobs.unique_likes b where a.article_id = b.article_id"
 #get the 100 most similar documents for each document queried against the model
-(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=100)
+(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=101)
 probs = _.classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus)
 _.save_results(con, probs)
+
+#things that i can adjust:
+#number of matches
+#number of features to keep
+#"like" threshold
+#similarity threshold
+
+
 
 """
 reverse_q_mapping = _.invert_dict(q_id_mapping)
