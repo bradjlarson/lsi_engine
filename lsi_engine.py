@@ -225,10 +225,16 @@ def save_results(con, probs, message):
 	cPickle.dump(probs, open('%s.probs' % message, 'wb'))
 	with con:
 		cur = con.cursor(mdb.cursors.DictCursor)
+		sql = "insert into jobs.testing_preds (article_id, message, prediction) values (%s, '%s', %.4f);"
+		params = [(prob[0], message, prob[1]) for prob in probs]
+		cur.executemany(sql, params)
+		con.commit()
+	"""
 	for prob in probs:
 		sql = "insert into jobs.testing_preds (article_id, message, prediction) values (%s, '%s', %.4f);" % (prob[0], message, prob[1])
 		print sql
 		cur.execute(sql)				
+	"""	
 	
 #thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
 #would then have another dictionary as the value, with keys for any number of values
