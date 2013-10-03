@@ -222,7 +222,7 @@ def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=F
 	return probs
 	
 def save_results(con, probs, message):
-	cPickle.dump(id_mapping, open('%s.probs' % message, 'wb'))
+	cPickle.dump(probs, open('%s.probs' % message, 'wb'))
 	with con:
 		cur = con.cursor(mdb.cursors.DictCursor)
 	for prob in probs:
