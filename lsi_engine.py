@@ -225,7 +225,7 @@ def save_results(con, probs, message):
 	cPickle.dump(probs, open('%s.probs' % message, 'wb'))
 	with con:
 		cur = con.cursor(mdb.cursors.DictCursor)
-		sql = "insert into jobs.testing_preds (article_id, message, prediction) values (%s, '%s', %s);"
+		sql = "insert into jobs.testing_preds (article_id, message, prediction) values (%s, %s, %s);"
 		params = [(prob[0], message, prob[1]) for prob in probs]
 		cur.executemany(sql, params)
 		con.commit()
