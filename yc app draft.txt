@@ -1,0 +1,94 @@
+What is your company going to make?
+
+We are building a service that analyzes the flow of content among your followers networks to understand which content is being spread by whom and when, and leveraging that understanding to provide guidance on how to make your content stand out.
+
+To do this, we're combining a number of models and ideas (including topic and sentiment analysis, bayesian classifiers and networks, neural networks, markov chains, segmentation, and iterative optimization) into a cohesive, modular framework for analyzing content. This allows us to dynamically determine the best way to analyze your specific content, and combine insights from multiple models into a single, immediately usable, recommendation. Additionally, we combine insights across platforms, which allows us to extend the reach of your content beyond the specific platform you're using at the time. 
+
+
+please tell us in one or two sentences about the most impressive thing other than this startup that each founder has built or achieved.
+
+ZCS: TBD
+
+Brad: 
+
+Option #1:
+I built a bayesian classifier entirely in SQL, and then used that knowledge and experience to build a bayesian classifier to predict which articles I would like prior to reading them that achieved 70% accuracy for "likes", and 90% accuracy for dislikes, cutting my feed's volume by 60%. 
+
+Option #2:
+ I converted a traditional bike into a motorized electric bike capable of going 40mph with an accompanying solar charger. 
+
+Option #3:
+I finished tied 1st, 1st, and 3rd in the Wisconsin State Debate tournament in the three years that I entered. 
+
+Please tell us about a time when you, zcs, most successfully hacked some (non-computer system) to your advantage:
+
+Option #1:
+I cracked the code on for a contest on Evian water bottles. 
+
+Option #2:
+Brad and I's junior year at Duke, we took a class together, and quickly realized that the teacher didn't grade the homework until the end of the semester. So we partnered up, completed all of the homeworks in a week or two, turned them in, and then didn't show up to class again until the final. We still received A's. 
+
+Please tell us about an interesting project, preferably outside of class or work, that two or more of you created together. Include urls if possible. 
+
+Option #1:
+Brad had an idea about how to predict short term stock performance, but needed a way to test the hypothesis. Zane figured out the pattern behind Google and Yahoo's financial data API's, and quickly downloaded the prior 10 years of data for the entire NYSE. Initially, we thought the hypothesis held true, until we discovered that a coding error was using future data to predict present performance. After fixing that error, the hypothesis turned out to be unusable, and we turned our attention to other projects. 
+
+Option #2:
+After reading "Poor Charlie's Almanac", we decided to put together a comprehensive list of mental models. For each model, we summarize the model, what it's traditionally used to predict/understand, how it works in general terms, what happens in edge cases, provide links for additional research, and list which other models it interacts with.
+
+How long have the founders known one another and how did you meet? 
+
+We have known each other since Fall 2007, when we were in the same freshman dorm. We quickly became friends, spending a lot of time in each other's rooms throughout college. We later started a fraternity together, and have remained in close contact ever since. 
+
+ Why did you pick this idea to work on? Do you have domain expertise in this area? How do you know that people need what you're making?
+
+We approached this idea from two different directions - Zane was looking for a way to increase his social presence, and Brad was looking for a way to filter out the noise. We realized that the common denominator was making content stand out. We know that people need this because the amount of noise in social channels is increasing, and one's social brand is becoming increasingly important. 
+
+We each bring unique domain experience to this problem. Brad has been working on data analysis and modeling for over 4 years, and Zane has been building and scaling robust web applications for even longer. 
+
+What's new about what you're making? What substitutes do people resort to because it doesn't exist yet (or they don't know about it):
+
+Our closest competitors are all focusing on advertisers and large brands. Since we think that everyone will start valuing their social brand more and more, we are going to target the average user. We will give our product away and making our feedback immediately actionable, instead of hiding it behind a paywall. Currently average users rely on gut feeling and avoiding mistakes, rather than trying to improve their content. 
+
+Who are your competitors, and who might become your competitors? Who do you fear most? 
+
+Our closest competitors are Social Flow and Telligence, which provide a very similar service targeted at advertisers. Additionally companies like yHat and Knime are building easy to use modeling services which could be directed at this problem. There is also a growing number of scholarly articles coming out with new methods for approaching this problem space, which could be used and improved by any of the companies listed above, or by a new entrant. However, the the companies we fear the most are the content platforms, because they could either implement this type of service themselves, or they could shut off our access to their networks.
+
+What do you understand about your business that other companies in it just don't get?
+
+Competitors seem to be doing two things: limiting their audience to those that are willing to pay for it (only the largest content producers), and focusing on fitting in with content in users feeds. We understand that this service will become increasingly valuable throughout the entire ecosystem, and that standing out is more valuable than fitting in. 
+
+How do or will you make money? How much could you make? 
+
+At first, we won't make money. However, we intend to capture the low end of the market, and then leverage that expertise to attack the high end. Eventually, we envision a volume based pricing model, with either the volume of followers or content determining the cost (with low volumes remaining free). Additionally, our paying customers will be the first to receive new products and insights, and will be able to see a more nuanced view of the data behind our recommendations. Currently advertising is a mutli billion dollar market as is content production. As we're at the intersection of these two markets, we could make several billions of dollars, particularly if we are able to gain a first mover's advantage and "surf". 
+
+If you've already started working on it, how long have you been working and how many lines of code have you written?
+
+We started work on this particular implementation in early October, although the seeds were sown in previous year. As of October 21st, we have approximately 4000 lines of code.
+
+How far along are you? Do you have a beta yet? If not, when will you? Are you launched? If so, how many users do you have? Do you have revenue? If so, how much? If you're launched, what is your monthly growth rate?
+
+We hope to have a beta in the next month. An early implementation of the website is live, and we've built modular topic extraction, tokenization, part of speech tagging, bayesian classification systems, population segmentation, and model optimization components. We are in the process of incorporating network dynamics, neural networks, markov chains, sentiment analysis, and cross platform content discovery. 
+
+How will you get users?
+
+We plan to get users by giving away our product at first, with guidance delivered in real time. We also plan to schlepp. 
+
+If you had any other ideas you considered applying with, please list them. One may be something we've been waiting for. 
+
+TBD
+
+Please tell us something surprising or amusing that one of you has discovered.
+Blending coffee and butter is a delicious and effective way to lose weight and boost energy (at least for Brad).
+
+
+ 
+
+
+
+
+
+
+
+
+

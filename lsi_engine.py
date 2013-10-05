@@ -363,6 +363,14 @@ def nb_classify(bayes, b_o_w):
 def ln_p(prob):	
 	return (math.log(1- prob) - math.log(prob))
 	
+def get_results(query, con, filename, id_mapping, o_corpus, param):
+	(q_corpus, q_id_mapping, sims_id) = query_lsi_stored_id(query, con, filename, num_matches=param)
+	probs = classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus)
+	save_results(con, probs, 'num matches=%s' % param)
+
+def run_multiple(params, query, con, filename, id_mapping, o_corpus):
+	for param in params:
+		get_results(query, con, filename, id_mapping, o_corpus, param)
 	
 		
 	

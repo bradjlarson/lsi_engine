@@ -7,7 +7,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 #set up DB connection
 con = db.con;
 #set our query to build model
-query = "select article_id, article_text from jobs.testing_corpus order by RAND()"
+#query = "select article_id, article_text from jobs.testing_corpus order by RAND()"
 #set filename
 filename = 'testing'
 #this returns an lsi transformed corpus, the original corpus, the TF-IDF and LSI models, index, dictnry, and article_id to index id dictionary
@@ -16,9 +16,14 @@ o_corpus = _.corpora.MmCorpus('%s.mm' % filename)
 id_mapping = _.cPickle.load(open('%s.idmap' % filename, 'rb'))
 query = "select a.article_id, article_text from jobs.testing_corpus a, jobs.unique_likes b where a.article_id = b.article_id"
 #get the 100 most similar documents for each document queried against the model
-(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=301)
-probs = _.classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus)
-_.save_results(con, probs, 'num matches=301')
+params = [i *25 for i in range(2,40)]
+_.run_multiple(params)
+
+
+#(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=301)
+#probs = _.classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus)
+#_.save_results(con, probs, 'num matches=301')
+
 
 #things that i can adjust:
 #number of matches to use in NB
@@ -26,6 +31,10 @@ _.save_results(con, probs, 'num matches=301')
 #"like" threshold in NB
 #similarity threshold in LSI
 #number of words to use in classifier (PG modified NB)
+
+#next step is to build a set of functions that allows me to run this set of queries 100's/1000's of times
+#each run would be a different combination of the things that I could adjust, so that the final output of the model is:
+#the best set of parameters for a given set of data
 
 
 
