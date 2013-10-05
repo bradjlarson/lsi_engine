@@ -17,7 +17,7 @@ id_mapping = _.cPickle.load(open('%s.idmap' % filename, 'rb'))
 query = "select a.article_id, article_text from jobs.testing_corpus a, jobs.unique_likes b where a.article_id = b.article_id"
 #get the 100 most similar documents for each document queried against the model
 params = [i *25 for i in range(2,40)]
-_.run_multiple(params)
+_.run_multiple(params, query, con, filename, id_mapping, o_corpus)
 
 
 #(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=301)
