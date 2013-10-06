@@ -197,10 +197,7 @@ def query_lsi_stored_id(query, con, filename, stop_list=default_stop_list, num_m
 	sims_id = {k : [tup for tup in sims_id[k] if tup[0] <> k] for k in sims_id}
 	return (q_corpus, q_id_mapping, sims_id)
 	
-def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
-	if filename:
-		id_mapping = cPickle.load(open('%s.idmap' % filename, 'rb'))
-		corpus = corpora.MmCorpus('%s.mm' % filename)
+def bridge_lsi_nb(sims):
 	sql_stmts = []	
 	for sim in sims:
 		in_stmt = reduce(lambda x, y: x + str(y[0]) + ", ", sims[sim], "")
@@ -216,8 +213,8 @@ def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus, num
 	probs = [[article[0], nb_classify(article[1], article[2], num_tokens)] for article in add_bow]
 	return probs	
 
-def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=False, num_tokens=False):
-	sql = bridge_lsi_nb(sims, id_mapping, corpus, filename)
+def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens=False):
+	sql = bridge_lsi_nb(sims)
 	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens)
 	return probs
 	
