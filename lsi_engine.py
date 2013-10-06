@@ -213,12 +213,12 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens=False):
 	nb_models = [[stmt[0], build_nb(stmt[1], con, id_mapping, corpus)] for stmt in sql_stmts]
 	add_bow = [[model[0], model[1], article_to_bow([model[0]], q_id_mapping, q_corpus)] for model in nb_models]
-	probs = [[article[0], nb_classify(article[1], article[2], num_tokens=num_tokens)] for article in add_bow]
+	probs = [[article[0], nb_classify(article[1], article[2], num_tokens)] for article in add_bow]
 	return probs	
 
 def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=False, num_tokens=False):
 	sql = bridge_lsi_nb(sims, id_mapping, corpus, filename)
-	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens=num_tokens)
+	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens)
 	return probs
 	
 def save_results(con, probs, message):
@@ -232,7 +232,7 @@ def save_results(con, probs, message):
 	
 def get_results(tokens, matches, query, con, filename, id_mapping, o_corpus):
 	(q_corpus, q_id_mapping, sims_id) = query_lsi_stored_id(query, con, filename, num_matches=matches)
-	probs = classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus, num_tokens=tokens)
+	probs = classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus, tokens)
 	save_results(con, probs, 'num matches=%s, pg bayes=%s' % (matches, tokens))
 
 def run_multiple(num_tokens, num_matches, query, con, filename, id_mapping, o_corpus):
@@ -357,7 +357,7 @@ def cutoffs(num, upper=15, lower=-15):
 		return num
 
 #this returns a probability that a bag of words is a "yes"	
-def nb_classify(bayes, b_o_w, n=False):
+def nb_classify(bayes, b_o_w, n):
 	probs = [bayes[w[0]] for w in b_o_w[0] if w[0] in bayes]
 	probs = sorted(probs)
 	if n:
