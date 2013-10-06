@@ -16,8 +16,10 @@ o_corpus = _.corpora.MmCorpus('%s.mm' % filename)
 id_mapping = _.cPickle.load(open('%s.idmap' % filename, 'rb'))
 query = "select a.article_id, article_text from jobs.testing_corpus a, jobs.unique_likes b where a.article_id = b.article_id"
 #get the 100 most similar documents for each document queried against the model
-params = [i *25 for i in range(2,10)]
-_.run_multiple(params, query, con, filename, id_mapping, o_corpus)
+num_matches = [i * 25 for i in range(2,10)]
+num_tokens = [i *20 for i in range(1,10)]
+
+_.run_multiple(num_tokens, num_matches, query, con, filename, id_mapping, o_corpus)
 
 
 #(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=75)
@@ -28,8 +30,8 @@ _.run_multiple(params, query, con, filename, id_mapping, o_corpus)
 #things that i can adjust:
 #number of matches to use in NB (done, best for this testing corpus seems to be 50-125 (for 150 features))
 #number of features to keep in LSI
-#"like" threshold in NB
-#similarity threshold in LSI
+#"like" threshold in NB 
+#similarity threshold in LSI 
 #number of words to use in classifier (PG modified NB)
 
 #next step is to build a set of functions that allows me to run this set of queries 100's/1000's of times
