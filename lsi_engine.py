@@ -213,12 +213,12 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens=False):
 	nb_models = [[stmt[0], build_nb(stmt[1], con, id_mapping, corpus)] for stmt in sql_stmts]
 	add_bow = [[model[0], model[1], article_to_bow([model[0]], q_id_mapping, q_corpus)] for model in nb_models]
-	probs = [[article[0], nb_classify(article[1], article[2], num_tokens)] for article in add_bow]
+	probs = [[article[0], nb_classify(article[1], article[2], num_tokens=num_tokens)] for article in add_bow]
 	return probs	
 
 def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=False, num_tokens=False):
 	sql = bridge_lsi_nb(sims, id_mapping, corpus, filename)
-	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens)
+	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens=num_tokens)
 	return probs
 	
 def save_results(con, probs, message):
@@ -361,7 +361,9 @@ def nb_classify(bayes, b_o_w, n=False):
 	probs = [bayes[w[0]] for w in b_o_w[0] if w[0] in bayes]
 	probs = sorted(probs)
 	if n:
+		print n
 		probs = probs[:n] + probs[n:]
+	print probs	
 	nu = reduce(lambda x, y: x + ln_p(y), probs, 0)
 	nu = cutoffs(nu)
 	return (1 / (1 + math.exp(nu)))
