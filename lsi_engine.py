@@ -357,7 +357,6 @@ def nb_classify(bayes, b_o_w):
 	probs = [bayes[w[0]] for w in b_o_w[0] if w[0] in bayes]
 	probs = sorted(probs)
 	probs = probs[:10] + probs[-10:]
-	print probs
 	nu = reduce(lambda x, y: x + ln_p(y), probs, 0)
 	nu = cutoffs(nu)
 	return (1 / (1 + math.exp(nu)))
@@ -369,7 +368,7 @@ def ln_p(prob):
 def get_results(query, con, filename, id_mapping, o_corpus, param):
 	(q_corpus, q_id_mapping, sims_id) = query_lsi_stored_id(query, con, filename, num_matches=param)
 	probs = classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus)
-	save_results(con, probs, 'num matches=%s' % param)
+	save_results(con, probs, 'num matches=%s; pg bayes=10' % param)
 
 def run_multiple(params, query, con, filename, id_mapping, o_corpus):
 	for param in params:
