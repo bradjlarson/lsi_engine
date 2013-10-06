@@ -10,15 +10,16 @@ con = db.con;
 #query = "select article_id, article_text from jobs.testing_corpus order by RAND()"
 #set filename
 filename = 'testing'
-#this returns an lsi transformed corpus, the original corpus, the TF-IDF and LSI models, index, dictnry, and article_id to index id dictionary
-#(l_corpus, o_corpus, tfidf, lsi, index, dictnry, id_mapping) = _.model_lsi_id(query, con, filename)
-o_corpus = _.corpora.MmCorpus('%s.mm' % filename)
-id_mapping = _.cPickle.load(open('%s.idmap' % filename, 'rb'))
 query = "select a.article_id, article_text from jobs.testing_corpus a, jobs.unique_likes b where a.article_id = b.article_id"
+#this returns an lsi transformed corpus, the original corpus, the TF-IDF and LSI models, index, dictnry, and article_id to index id dictionary
+(l_corpus, o_corpus, tfidf, lsi, index, dictnry, id_mapping) = _.model_lsi_id(query, con, filename)
+#o_corpus = _.corpora.MmCorpus('%s.mm' % filename)
+#id_mapping = _.cPickle.load(open('%s.idmap' % filename, 'rb'))
 #get the 100 most similar documents for each document queried against the model
+#set the params
 num_matches = [i * 25 for i in range(2,10)]
 num_tokens = [i *20 for i in range(1,10)]
-
+#run all the combinations of the params
 _.run_multiple(num_tokens, num_matches, query, con, filename, id_mapping, o_corpus)
 
 
