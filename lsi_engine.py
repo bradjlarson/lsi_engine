@@ -210,31 +210,35 @@ def bridge_lsi_nb(sims, id_mapping, corpus, filename=False):
 	 	#models.append(build_nb(sql, con, id_mapping, corpus))
 	return sql_stmts
 	
-def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus):
+def get_nb_probs(sql_stmts, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens=False):
 	nb_models = [[stmt[0], build_nb(stmt[1], con, id_mapping, corpus)] for stmt in sql_stmts]
 	add_bow = [[model[0], model[1], article_to_bow([model[0]], q_id_mapping, q_corpus)] for model in nb_models]
-	probs = [[article[0], nb_classify(article[1], article[2])] for article in add_bow]
+	probs = [[article[0], nb_classify(article[1], article[2], num_tokens)] for article in add_bow]
 	return probs	
 
-def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=False):
+def classifier(con, sims, id_mapping, corpus, q_id_mapping, q_corpus, filename=False, num_tokens=False):
 	sql = bridge_lsi_nb(sims, id_mapping, corpus, filename)
-	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus)
+	probs = get_nb_probs(sql, con, id_mapping, corpus, q_id_mapping, q_corpus, num_tokens)
 	return probs
 	
 def save_results(con, probs, message):
-	cPickle.dump(probs, open('%s.probs' % message, 'wb'))
+	#cPickle.dump(probs, open('%s.probs' % message, 'wb'))
 	with con:
 		cur = con.cursor(mdb.cursors.DictCursor)
 		sql = "insert into jobs.testing_preds (article_id, message, prediction) values (%s, %s, %s);"
 		params = [(prob[0], message, prob[1]) for prob in probs]
 		cur.executemany(sql, params)
 		con.commit()
-	"""
-	for prob in probs:
-		sql = "insert into jobs.testing_preds (article_id, message, prediction) values (%s, '%s', %.4f);" % (prob[0], message, prob[1])
-		print sql
-		cur.execute(sql)				
-	"""	
+	
+def get_results(tokens, matches, query, con, filename, id_mapping, o_corpus, param):
+	(q_corpus, q_id_mapping, sims_id) = query_lsi_stored_id(query, con, filename, num_matches=matches)
+	probs = classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus, num_tokens=tokens)
+	save_results(con, probs, 'num matches=%s, pg bayes=%s' % (matches, tokens))
+
+def run_multiple(num_tokens, num_matches, query, con, filename, id_mapping, o_corpus):
+	for token in num_tokens:
+		for match in num_matches:
+			get_results(token, match, con, filename, id_mapping, o_corpus, param)	
 	
 #thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
 #would then have another dictionary as the value, with keys for any number of values
@@ -353,10 +357,11 @@ def cutoffs(num, upper=15, lower=-15):
 		return num
 
 #this returns a probability that a bag of words is a "yes"	
-def nb_classify(bayes, b_o_w):
+def nb_classify(bayes, b_o_w, n=False):
 	probs = [bayes[w[0]] for w in b_o_w[0] if w[0] in bayes]
 	probs = sorted(probs)
-	probs = probs[:10] + probs[-10:]
+	if n:
+		probs = probs[:n] + probs[n:]
 	nu = reduce(lambda x, y: x + ln_p(y), probs, 0)
 	nu = cutoffs(nu)
 	return (1 / (1 + math.exp(nu)))
@@ -365,14 +370,7 @@ def nb_classify(bayes, b_o_w):
 def ln_p(prob):	
 	return (math.log(1- prob) - math.log(prob))
 	
-def get_results(query, con, filename, id_mapping, o_corpus, param):
-	(q_corpus, q_id_mapping, sims_id) = query_lsi_stored_id(query, con, filename, num_matches=param)
-	probs = classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus)
-	save_results(con, probs, 'num matches=%s; pg bayes=10' % param)
 
-def run_multiple(params, query, con, filename, id_mapping, o_corpus):
-	for param in params:
-		get_results(query, con, filename, id_mapping, o_corpus, param)
 	
 		
 	
