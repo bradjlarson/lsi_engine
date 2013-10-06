@@ -16,17 +16,17 @@ o_corpus = _.corpora.MmCorpus('%s.mm' % filename)
 id_mapping = _.cPickle.load(open('%s.idmap' % filename, 'rb'))
 query = "select a.article_id, article_text from jobs.testing_corpus a, jobs.unique_likes b where a.article_id = b.article_id"
 #get the 100 most similar documents for each document queried against the model
-params = [i *25 for i in range(2,40)]
+params = [i *25 for i in range(2,10)]
 _.run_multiple(params, query, con, filename, id_mapping, o_corpus)
 
 
-#(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=301)
+#(q_corpus, q_id_mapping, sims_id) = _.query_lsi_stored_id(query, con, filename, num_matches=75)
 #probs = _.classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus)
 #_.save_results(con, probs, 'num matches=301')
 
 
 #things that i can adjust:
-#number of matches to use in NB
+#number of matches to use in NB (done, best for this testing corpus seems to be 50-125 (for 150 features))
 #number of features to keep in LSI
 #"like" threshold in NB
 #similarity threshold in LSI
