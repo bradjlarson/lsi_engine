@@ -230,7 +230,7 @@ def save_results(con, probs, message):
 		cur.executemany(sql, params)
 		con.commit()
 	
-def get_results(tokens, matches, query, con, filename, id_mapping, o_corpus, param):
+def get_results(tokens, matches, query, con, filename, id_mapping, o_corpus):
 	(q_corpus, q_id_mapping, sims_id) = query_lsi_stored_id(query, con, filename, num_matches=matches)
 	probs = classifier(con, sims_id, id_mapping, o_corpus, q_id_mapping, q_corpus, num_tokens=tokens)
 	save_results(con, probs, 'num matches=%s, pg bayes=%s' % (matches, tokens))
@@ -238,7 +238,7 @@ def get_results(tokens, matches, query, con, filename, id_mapping, o_corpus, par
 def run_multiple(num_tokens, num_matches, query, con, filename, id_mapping, o_corpus):
 	for token in num_tokens:
 		for match in num_matches:
-			get_results(token, match, con, filename, id_mapping, o_corpus, param)	
+			get_results(token, match, query, con, filename, id_mapping, o_corpus)	
 	
 #thought is to implement a dictionary to store the id_mappings, with the corpus number as the index
 #would then have another dictionary as the value, with keys for any number of values
