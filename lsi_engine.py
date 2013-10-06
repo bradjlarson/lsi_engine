@@ -356,7 +356,7 @@ def cutoffs(num, upper=15, lower=-15):
 def nb_classify(bayes, b_o_w):
 	probs = [bayes[w[0]] for w in b_o_w[0] if w[0] in bayes]
 	probs = sorted(probs)
-	probs = [:10] + [-10:]
+	probs = probs[:10] + probs[-10:]
 	print probs
 	nu = reduce(lambda x, y: x + ln_p(y), probs, 0)
 	nu = cutoffs(nu)
