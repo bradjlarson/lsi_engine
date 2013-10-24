@@ -1,0 +1,12 @@
+things we'll want
+
+part of speech tagger
+n-gram maker
+bayesian classifer
+lsa topic modeler
+plsa topic modeler?
+log entropy
+random projections modeler
+(maybe lda, although it is a lot slower)
+word2vec
+crm114
