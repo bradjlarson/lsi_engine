@@ -1,4 +1,5 @@
 from pattern.web import Newsfeed, Crawler, crawl
+from pattern.en import parse, pprint
 import requests
 import justext
 import sys
@@ -17,5 +18,5 @@ for result in Newsfeed().search(hn)[:5]:
 	else:	
 		for para in paragraphs:
 			if not para.is_boilerplate:
-				print para.text
+				pprint(parse(para.text, relations=True, lemmata=True))
 
